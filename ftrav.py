@@ -101,6 +101,10 @@ def main():
     parser.add_argument('report_name', type=str)
     args = parser.parse_args()
 
+    files = FileParser(args.directory, args.hash_type, args.report_name)
+    files.traverse()
+    files.writeXml()
+
 
 if __name__ == '__main__':
     main()
