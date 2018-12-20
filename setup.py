@@ -12,5 +12,7 @@ setuptools.setup(
     entry_points={'console_scripts': 'ftrav = ftrav.scripts.ftrav:main'},
     classifiers={'Programming Language :: Python :: 3',
                  'License :: OSI Approved :: GPL-3',
-                 'Operating System :: Linux, OS-X, Windows'}
+                 'Operating System :: Linux, OS-X, Windows'},
+    include_package_data=True,
+    package_data={'ftrav':'scripts'}
 )
