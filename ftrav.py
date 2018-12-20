@@ -236,7 +236,7 @@ def file_type_check(file_name):
         raise TypeError('\"{}\" - file type not given. Must be .xml or .json'.format(file_name))
 
     # check extension
-    file_type = os.path.split(file_name)[1].split('.')[1]
+    file_type = os.path.split(file_name)[1].split('.')[-1]
     if file_type != 'xml' and file_type != 'json':
         raise TypeError('\"{}\" is not of .xml or .json type'.format(file_name))
 
