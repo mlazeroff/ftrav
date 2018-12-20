@@ -8,8 +8,8 @@ setuptools.setup(
     author_email='mdlazeroff@gmail.com',
     description='Utility for traversing and indexing directory contents',
     url='https://github.com/mlazeroff/ftrav',
-    packages=['ftrav', 'scripts'],
-    entry_points={'console_scripts': 'ftrav = scripts.ftrav:main'},
+    packages=['ftrav'],
+    entry_points={'console_scripts': 'ftrav = ftrav.scripts.ftrav:main'},
     classifiers={'Programming Language :: Python :: 3',
                  'License :: OSI Approved :: GPL-3',
                  'Operating System :: Linux, OS-X, Windows'}
