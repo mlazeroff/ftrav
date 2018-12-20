@@ -1,6 +1,6 @@
 import argparse  # argument parsing
 import os        # path calls
-import ftrav.ftrav_utils as ft
+import ftrav_utils as ft
 
 
 def directory_check(path):
@@ -36,12 +36,15 @@ def main():
     # parse arguments <directory> <hash_type> <report_name>
     parser = argparse.ArgumentParser()
     parser.add_argument('directory', type=directory_check)
-    parser.add_argument('hash_type', choices=ft.HASH_FXNS)
+    parser.add_argument('--hash', choices=ft.HASH_FXNS)
     parser.add_argument('report_name', type=str)
     args = parser.parse_args()
 
     # traverse directory
-    files = ft.FileParser(args.directory, args.hash_type)
+    if 'hash' in args:
+        files = ft.FileParser(args.directory, hash_type=args.hash)
+    else:
+        files = ft.FileParser(args.directory)
     files.traverse()
 
     # output data based on file type
