@@ -3,6 +3,10 @@ Utility for traversing and indexing directory contents
 ## Overview
 FTrav tracks indexes, metadata, and can hash all files from a starting directory and outputs the data in XML/JSON format.
 
+Useful for indexing directories and keeping track of file changes. 
+
+Note: Hashing alters last access date in metadata
+
 ## Getting Started
 ### Prerequisites
 * Python 3.*
@@ -37,22 +41,16 @@ D:/sample/
 <Directory name="D:\sample">
 	<File name="sample1.txt">
 		<size>7 Bytes</size>
-		<accessed>Wednesday, 12/19/2018, 11:00:36 PM</accessed>
 		<modified>Wednesday, 12/19/2018, 10:31:13 PM</modified>
-		<change>Wednesday, 12/19/2018, 11:00:36 PM</change>
 	</File>
 	<File name="sample2.txt">
 		<size>11 Bytes</size>
-		<accessed>Wednesday, 12/19/2018, 11:00:36 PM</accessed>
 		<modified>Wednesday, 12/19/2018, 10:31:13 PM</modified>
-		<change>Wednesday, 12/19/2018, 11:00:36 PM</change>
 	</File>
 	<Directory name="D:\sample\subsample">
 		<File name="subsample2.txt">
 			<size>14 Bytes</size>
-			<accessed>Wednesday, 12/19/2018, 11:00:36 PM</accessed>
 			<modified>Wednesday, 12/19/2018, 10:31:14 PM</modified>
-			<change>Wednesday, 12/19/2018, 11:00:36 PM</change>
 		</File>
 	</Directory>
 </Directory>
@@ -68,24 +66,18 @@ Can use --hash argument to include hash information for each file
 	<File name="sample1.txt">
 		<size>7 Bytes</size>
 		<sha256-hash>e85130791f31db1699f61a5e7ae7b5e85e70399414f38476091896214771cd17</sha256-hash>
-		<accessed>Wednesday, 12/19/2018, 11:00:36 PM</accessed>
 		<modified>Wednesday, 12/19/2018, 10:31:13 PM</modified>
-		<change>Wednesday, 12/19/2018, 11:00:36 PM</change>
 	</File>
 	<File name="sample2.txt">
 		<size>11 Bytes</size>
 		<sha256-hash>36d4fa357ff83bfffc4c6593ad3a4cc134c9cf092683ec15795cc757ae337a4c</sha256-hash>
-		<accessed>Wednesday, 12/19/2018, 11:00:36 PM</accessed>
 		<modified>Wednesday, 12/19/2018, 10:31:13 PM</modified>
-		<change>Wednesday, 12/19/2018, 11:00:36 PM</change>
 	</File>
 	<Directory name="D:\sample\subsample">
 		<File name="subsample2.txt">
 			<size>14 Bytes</size>
 			<sha256-hash>d6ca706d643f2804f857d0cead9ce95ea7f1952197ac9d171006cd4d91af714d</sha256-hash>
-			<accessed>Wednesday, 12/19/2018, 11:00:36 PM</accessed>
 			<modified>Wednesday, 12/19/2018, 10:31:14 PM</modified>
-			<change>Wednesday, 12/19/2018, 11:00:36 PM</change>
 		</File>
 	</Directory>
 </Directory>
