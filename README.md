@@ -32,9 +32,6 @@ D:/sample/
 ```
 ```angular2html
 >>> ftrav D:/sample sample.xml
-```
-Output
-```angular2html
 >>> cat sample.xml
 <?xml version="1.0" ?>
 <Directory name="D:\sample">
@@ -64,11 +61,8 @@ Output
 
 Can use --hash argument to include hash information for each file
 ```angular2html
->>> ftrav D:/sample sample.json --hash sha256
-```
-Output
-```angular2html
->>> cat sample.json
+>>> ftrav D:/sample sample.xml --hash sha256
+>>> cat sample.xml
 <?xml version="1.0" ?>
 <Directory name="D:\sample">
 	<File name="sample1.txt">

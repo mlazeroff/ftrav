@@ -88,15 +88,10 @@ class File:
             hasher.update(content)
             self.stats['{}-hash'.format(hash_fxn)] = hasher.hexdigest()
 
-        # last access date
-        self.stats['accessed'] = datetime.fromtimestamp(stats[7]).strftime(
-            '%A, %m/%d/%Y, %I:%M:%S %p')
         # last modification date
         self.stats['modified'] = datetime.fromtimestamp(stats[8]).strftime(
             '%A, %m/%d/%Y, %I:%M:%S %p')
-        # last file permissions change
-        self.stats['change'] = datetime.fromtimestamp(stats[9]).strftime(
-            '%A, %m/%d/%Y, %I:%M:%S %p')
+
 
     # Static dictionary for size units
     UNITS = {0: 'Bytes', 1: 'KB', 2: 'MB', 3: 'GB', 4: 'TB'}
