@@ -1,9 +1,6 @@
 """
 Tool for traversing a directory and reporting information related to all files
 """
-import argparse  # argument parsing
-import logging  # logging
-import sys
 import os  # path and directory info
 from datetime import datetime  # timestamp conversion
 import xml.etree.ElementTree as ET  # xml generation
@@ -212,65 +209,3 @@ def encode(item):
         return File.json_encode(item)
     else:
         return Directory.json_encode(item)
-
-
-def directory_check(path):
-    """
-    Check if passed path is a directory
-    :param path: complete path to the directory
-    :return: path if directory is valid, error if not
-    """
-    if not os.path.isdir(path):
-        raise NotADirectoryError('\"{}\" is not a directory'.format(path))
-
-    return path
-
-
-def file_type_check(file_name):
-    """
-    Check if output file is of XML or JSON type
-    :param file_name: file name
-    :return: xml/json if valid, error if not
-    """
-    if '.' not in file_name:
-        raise TypeError('\"{}\" - file type not given. Must be .xml or .json'.format(file_name))
-
-    # check extension
-    file_type = os.path.split(file_name)[1].split('.')[-1]
-    if file_type != 'xml' and file_type != 'json':
-        raise TypeError('\"{}\" is not of .xml or .json type'.format(file_name))
-
-    return file_type
-
-
-def main():
-    # enable logging
-    logging.basicConfig(filename='ftrav.log',
-                        level=logging.DEBUG,
-                        format='%(asctime)s - %(levelname)s - %(message)s',
-                        datefmt='%m/%d/%Y %H:%M:%S')
-    logging.info("ftrav Version: {} - Starting new scan".format(FTRAV_VERSION))
-    logging.info("System: {}".format(sys.platform))
-    logging.info("Version: {}".format(sys.version))
-
-    # parse arguments <directory> <hash_type> <report_name>
-    parser = argparse.ArgumentParser()
-    parser.add_argument('directory', type=directory_check)
-    parser.add_argument('hash_type', choices=HASH_FXNS)
-    parser.add_argument('report_name', type=str)
-    args = parser.parse_args()
-
-    # traverse directory
-    files = FileParser(args.directory, args.hash_type)
-    files.traverse()
-
-    # output data based on file type
-    file_type = file_type_check(args.report_name)
-    if file_type == 'xml':
-        files.write_xml(args.report_name)
-    elif file_type == 'json':
-        files.write_json(args.report_name)
-
-
-if __name__ == '__main__':
-    main()
