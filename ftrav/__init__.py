@@ -1,1 +1,1 @@
-import ftrav_utils
+from ftrav import ftrav_utils

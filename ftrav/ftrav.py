@@ -1,6 +1,6 @@
 import argparse  # argument parsing
 import os        # path calls
-import ftrav_utils as ft
+from ftrav import ftrav_utils as ft
 
 
 def directory_check(path):
