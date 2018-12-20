@@ -5,9 +5,11 @@ import argparse  # argument parsing
 import logging  # logging
 import sys
 import os  # path and directory info
-from datetime import datetime
+from datetime import datetime  # timestamp conversion
 import xml.etree.ElementTree as ET  # xml generation
 import xml.dom.minidom  # pretty xml printing
+import json  # json outputting
+import copy  # dictionary deepcopy
 
 # supported hash functions
 HASH_FXNS = ['md5', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512']
@@ -36,10 +38,20 @@ class Directory:
     def append(self, item):
         self.content.append(item)
 
+    @staticmethod
+    def json_encode(directory):
+
+        return {'Directory': {'name': directory.path, 'content': directory.content}}
+
 
 class File:
     """
     File object - contains information related to file on system
+    Tracked Properties:
+    * Size
+    * Last Modified Time
+    * Last Accessed Time
+    * Last File Permission Change Time
     """
 
     def __init__(self, path):
@@ -81,22 +93,31 @@ class File:
     # Static dictionary for size units
     UNITS = {0: 'Bytes', 1: 'KB', 2: 'MB', 3: 'GB', 4: 'TB'}
 
+    @staticmethod
+    def json_encode(file):
+        """
+        Method for encoding the File object in JSON
+        :param file: File obj
+        :return: JSON encoding
+        """
+        stats = copy.deepcopy(file.stats)
+        stats['name'] = file.name
+        return {'File': stats}
+
 
 class FileParser:
     """
     Class for traversing directories for file information
     """
 
-    def __init__(self, start_dir, hash_type, output_name):
+    def __init__(self, start_dir, hash_type=None):
         """
         Constructor
         :param start_dir: directory to begin traversal from
         :param hash_type: hashing type - must be supported (see HASH FXNS)
-        :param output_name: output file name
         """
         self.start_dir = start_dir
         self.hash_type = hash_type
-        self.output_file = output_name
         self.files = Directory(self.start_dir)
 
     def traverse(self):
@@ -154,9 +175,10 @@ class FileParser:
         # Root Element of XML sub-tree
         return new_dir
 
-    def write_xml(self):
+    def write_xml(self, output_file):
         """
         Write XML tree to file
+        :param output_file: name of output file
         :return: None
         """
         # Build XML tree
@@ -167,8 +189,58 @@ class FileParser:
         output = output.toprettyxml()
 
         # Write to file
-        with open(self.output_file, 'w') as file:
+        with open(output_file, 'w') as file:
             file.write(output)
+
+    def write_json(self, output_file):
+        """
+        Write Directory information to JSON
+        :param output_file: name of output file
+        :return:
+        """
+        with open(output_file, 'w') as file:
+            json.dump(self.files, file, indent=1, default=encode)
+
+
+def encode(item):
+    """
+    Calls correct json encoding function
+    :param item: File or Directory object
+    :return: appropriate encoding of object
+    """
+    if isinstance(item, File):
+        return File.json_encode(item)
+    else:
+        return Directory.json_encode(item)
+
+
+def directory_check(path):
+    """
+    Check if passed path is a directory
+    :param path: complete path to the directory
+    :return: path if directory is valid, error if not
+    """
+    if not os.path.isdir(path):
+        raise NotADirectoryError('\"{}\" is not a directory'.format(path))
+
+    return path
+
+
+def file_type_check(file_name):
+    """
+    Check if output file is of XML or JSON type
+    :param file_name: file name
+    :return: xml/json if valid, error if not
+    """
+    if '.' not in file_name:
+        raise TypeError('\"{}\" - file type not given. Must be .xml or .json'.format(file_name))
+
+    # check extension
+    file_type = os.path.split(file_name)[1].split('.')[1]
+    if file_type != 'xml' and file_type != 'json':
+        raise TypeError('\"{}\" is not of .xml or .json type'.format(file_name))
+
+    return file_type
 
 
 def main():
@@ -183,14 +255,21 @@ def main():
 
     # parse arguments <directory> <hash_type> <report_name>
     parser = argparse.ArgumentParser()
-    parser.add_argument('directory', type=str)
+    parser.add_argument('directory', type=directory_check)
     parser.add_argument('hash_type', choices=HASH_FXNS)
     parser.add_argument('report_name', type=str)
     args = parser.parse_args()
 
-    files = FileParser(args.directory, args.hash_type, args.report_name)
+    # traverse directory
+    files = FileParser(args.directory, args.hash_type)
     files.traverse()
-    files.write_xml()
+
+    # output data based on file type
+    file_type = file_type_check(args.report_name)
+    if file_type == 'xml':
+        files.write_xml(args.report_name)
+    elif file_type == 'json':
+        files.write_json(args.report_name)
 
 
 if __name__ == '__main__':
