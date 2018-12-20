@@ -7,6 +7,7 @@ import xml.etree.ElementTree as ET  # xml generation
 import xml.dom.minidom  # pretty xml printing
 import json  # json outputting
 import copy  # dictionary deepcopy
+import hashlib
 
 # supported hash functions
 HASH_FXNS = ['md5', 'sha1', 'sha224', 'sha256', 'sha384', 'sha512']
@@ -51,7 +52,7 @@ class File:
     * Last File Permission Change Time
     """
 
-    def __init__(self, path):
+    def __init__(self, path, hash_fxn=None):
         """
         Constructor
         :param path: complete path to the file - error if not a file
@@ -77,6 +78,16 @@ class File:
             size /= 1024
             units += 1
         self.stats['size'] = '{} {}'.format(round(size), self.UNITS[units])
+
+        # hash function (if provided)
+        if hash_fxn is not None:
+            # read file
+            with open(self.path, 'rb') as file:
+                content = file.read()
+            hasher = hashlib.new(hash_fxn)
+            hasher.update(content)
+            self.stats['{}-hash'.format(hash_fxn)] = hasher.hexdigest()
+
         # last access date
         self.stats['accessed'] = datetime.fromtimestamp(stats[7]).strftime(
             '%A, %m/%d/%Y, %I:%M:%S %p')
@@ -113,7 +124,7 @@ class FileParser:
         :param start_dir: directory to begin traversal from
         :param hash_type: hashing type - must be supported (see HASH FXNS)
         """
-        self.start_dir = start_dir
+        self.start_dir = os.path.abspath(start_dir)
         self.hash_type = hash_type
         self.files = Directory(self.start_dir)
 
@@ -131,11 +142,11 @@ class FileParser:
         for item in files:
             item_path = os.path.join(path, item)
             if os.path.isdir(item_path):
-                new_dir = Directory(item_path)
+                new_dir = Directory(os.path.abspath(item_path))
                 parent_dir.append(new_dir)
                 self.__traverse_dir(item_path, new_dir)
             elif os.path.isfile(item_path):
-                parent_dir.append(File(item_path))
+                parent_dir.append(File(item_path, hash_fxn=self.hash_type))
 
     def __xml_traverse(self, directory, parent_dir=None):
         """
