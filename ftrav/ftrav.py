@@ -1,3 +1,5 @@
+#! /usr/bin/env python3
+
 import argparse  # argument parsing
 import os        # path calls
 from ftrav import ftrav_utils as ft
